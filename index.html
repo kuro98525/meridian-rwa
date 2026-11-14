@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MERIDIAN · Real-World Assets — Liquidity where there used to be none</title>
+<meta name="description" content="Treasuries, real estate, private credit — institutions are moving them on-chain.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0a1626; --navy2:#0e1f36; --ink:#141b24; --body:#f4f1ea;
+    --muted:#6b6f78; --faint:#a8adb5;
+    --gold:#c9a227; --gold2:#dbb540; --gold-dim:rgba(201,162,39,.16);
+    --hair:#e2dccb; --paper:#fbfaf6;
+    --font:"Inter",-apple-system,"SF Pro Text","Segoe UI",sans-serif;
+    --display:"Playfair Display",Georgia,serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .container{max-width:1120px;margin:0 auto;padding:0 28px}
+  .container--narrow{max-width:820px}
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s ease}
+  .rv.in{opacity:1;transform:none}
+  [id]{scroll-margin-top:70px}
+
+  .progress{position:fixed;top:0;left:0;height:3px;background:var(--gold);width:0;z-index:60}
+
+  .nav{position:sticky;top:0;z-index:50;background:rgba(10,22,38,.92);backdrop-filter:blur(14px)}
+  .nav__inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{font-family:var(--display);font-weight:600;letter-spacing:.3em;font-size:16px;color:#fff}
+  .brand small{display:block;font-family:var(--font);font-weight:400;font-size:9px;letter-spacing:.34em;color:var(--gold);text-transform:uppercase}
+  .nav__links{display:flex;align-items:center;gap:28px;list-style:none}
+  .nav__links a{font-size:13px;color:rgba(255,255,255,.72);letter-spacing:.04em;transition:color .2s}
+  .nav__links a:hover{color:#fff}
+  .nav__links .nav__cta{color:var(--gold);border:1px solid var(--gold);padding:8px 18px;border-radius:2px;letter-spacing:.1em}
+  .nav__links .nav__cta:hover{background:var(--gold);color:var(--navy)}
+
+  .hero{background:radial-gradient(120% 90% at 50% -10%, #16335a 0%, var(--navy) 55%);color:#fff;padding:104px 0 92px;text-align:center;position:relative}
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  .eyebrow{font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:26px}
+  .hero__title{font-family:var(--display);font-weight:500;font-size:clamp(32px,4.6vw,54px);line-height:1.14;letter-spacing:-.01em;max-width:22ch;margin:0 auto}
+  .hero__title em{font-style:italic;color:var(--gold2)}
+  .hero__dek{font-size:17px;line-height:1.7;color:rgba(255,255,255,.74);margin:28px auto 0;max-width:54ch}
+  .hero__note{font-size:12px;letter-spacing:.14em;color:rgba(255,255,255,.5);margin-top:18px;text-transform:uppercase}
+  .hero__ctas{display:flex;gap:16px;margin-top:36px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);font-size:13.5px;font-weight:500;letter-spacing:.06em;cursor:pointer;transition:.25s;border-radius:2px}
+  .btn--gold{background:var(--gold);color:var(--navy);padding:15px 32px}
+  .btn--gold:hover{background:var(--gold2)}
+  .btn--ghost{background:transparent;color:#fff;padding:15px 8px;border-bottom:1px solid rgba(255,255,255,.4)}
+  .btn--ghost:hover{border-color:var(--gold);color:var(--gold2)}
+  .btn--primary{background:var(--navy);color:#fff;padding:14px 30px}
+  .btn--primary:hover{background:var(--navy2)}
+
+  .ledger{background:var(--paper)}
+  .ledger__wrap{display:grid;grid-template-columns:1.2fr .8fr .8fr .9fr;border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+  .lcell{padding:26px 22px;border-left:1px solid var(--hair)}
+  .lcell:first-child{border-left:none}
+  .lcell__label{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+  .lcell__value{font-family:var(--display);font-size:27px;font-weight:600;color:var(--navy);margin-top:8px}
+  .lcell__value.gold{color:var(--gold)}
+  .lcell__sub{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+
+  .section{padding:88px 0}
+  .section--dark{background:var(--navy);color:#fff}
+  .section__label{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+  .section__title{font-family:var(--display);font-weight:500;font-size:clamp(28px,3.6vw,42px);line-height:1.12;letter-spacing:-.01em}
+  .section__lede{font-size:16px;color:var(--muted);margin-top:16px;max-width:58ch}
+  .section--dark .section__lede{color:rgba(255,255,255,.68)}
+
+  .explorer{margin-top:44px;background:#fff;border:1px solid var(--hair)}
+  .tabs{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--hair)}
+  .tab{background:none;border:none;border-bottom:2px solid transparent;padding:18px;font-family:var(--display);font-size:17px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s}
+  .tab:hover{color:var(--navy)}
+  .tab.is-active{color:var(--navy);border-color:var(--gold)}
+  .panel{display:none;padding:34px 30px;animation:in .35s ease}
+  .panel.is-active{display:block}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .panel__head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+  .panel__title{font-family:var(--display);font-size:25px;font-weight:600;color:var(--navy)}
+  .panel__adopt{font-size:13px;color:var(--gold);letter-spacing:.08em}
+  .panel__text{font-size:15px;color:var(--muted);margin-top:12px;line-height:1.7;max-width:60ch}
+  .panel__bar{margin-top:20px;height:7px;background:var(--hair);border-radius:4px;overflow:hidden}
+  .panel__fill{height:100%;background:var(--gold);border-radius:4px;transition:width .6s ease}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:44px;border:1px solid rgba(255,255,255,.14)}
+  .step{padding:30px 26px;border-left:1px solid rgba(255,255,255,.14)}
+  .step:first-child{border-left:none}
+  .step__num{font-family:var(--display);font-size:30px;color:var(--gold);font-style:italic}
+  .step__title{font-family:var(--display);font-size:20px;font-weight:600;margin-top:12px}
+  .step__text{font-size:14px;color:rgba(255,255,255,.68);margin-top:8px;line-height:1.6}
+
+  .institutions{margin-top:44px;text-align:center}
+  .inst-label{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:26px}
+  .inst-grid{display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+  .inst{font-family:var(--display);font-size:19px;color:rgba(255,255,255,.6);font-style:italic}
+  .inst small{display:block;font-family:var(--font);font-size:11px;font-style:normal;color:rgba(255,255,255,.4);letter-spacing:.12em;text-transform:uppercase;margin-top:4px}
+  .inst-note{font-size:11.5px;color:rgba(255,255,255,.42);margin-top:24px;font-style:italic;max-width:52ch;margin-left:auto;margin-right:auto}
+
+  .faq{margin-top:44px;border-top:1px solid var(--hair)}
+  .faq details{border-bottom:1px solid var(--hair)}
+  .faq summary{list-style:none;cursor:pointer;padding:20px 2px;font-family:var(--display);font-size:19px;font-weight:600;color:var(--navy);display:flex;justify-content:space-between;align-items:center;transition:.15s}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";color:var(--gold);font-size:24px;font-weight:400;transition:transform .2s}
+  .faq details[open] summary::after{transform:rotate(45deg)}
+  .faq summary:hover{color:var(--gold)}
+  .faq p{padding:0 0 20px;color:var(--muted);font-size:14.5px;line-height:1.7}
+
+  .report-form{display:flex;gap:12px;margin-top:30px;flex-wrap:wrap}
+  .report-form input{flex:1;min-width:200px;background:#fff;border:1px solid var(--hair);color:var(--ink);padding:14px 18px;border-radius:2px;font-size:14.5px;font-family:var(--font)}
+  .report-form input::placeholder{color:var(--faint)}
+  .report-form input:focus{outline:none;border-color:var(--gold)}
+  .report-note{margin-top:16px;font-size:13px;color:var(--faint)}
+  .prose{text-align:left;margin-top:44px}
+  .prose h3{font-family:var(--display);font-size:23px;font-weight:600;margin:26px 0 8px;color:var(--navy)}
+  .prose h3:first-child{margin-top:0}
+  .prose p{font-size:15.5px;line-height:1.85;color:var(--muted);margin-top:14px}
+  .prose strong{color:var(--ink)}
+  .prose em{color:var(--gold);font-style:italic}
+  .honest{margin-top:44px;text-align:left;border:1px solid var(--hair);padding:32px;background:#fff}
+  .honest h3{font-family:var(--display);font-size:20px;font-weight:600;color:var(--gold);margin-bottom:14px}
+  .honest ul{list-style:none}
+  .honest li{font-size:14.5px;color:var(--muted);padding:12px 0;border-top:1px solid var(--hair);line-height:1.7}
+  .honest li:first-child{border-top:none}
+  .reading{margin-top:44px}
+  .reading__label{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+  .reading__grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .reading-card{background:#fff;border:1px solid var(--hair);border-radius:2px;padding:24px;transition:.2s}
+  .reading-card:hover{border-color:var(--gold)}
+  .reading-card__tag{font-size:11px;color:var(--gold)}
+  .reading-card__title{font-family:var(--display);font-size:19px;font-weight:600;color:var(--navy);margin-top:10px;line-height:1.3}
+  .reading-card__more{font-size:13px;color:var(--muted);margin-top:10px}
+  @media(max-width:640px){.reading__grid{grid-template-columns:1fr}}
+
+  .footer{background:var(--navy);color:#fff;padding:56px 0}
+  .footer__inner{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+  .footer__brand{font-family:var(--display);font-weight:600;letter-spacing:.18em;font-size:15px}
+  .footer__note{color:rgba(255,255,255,.5);font-size:12.5px;margin-top:12px;max-width:60ch;line-height:1.65}
+  .footer__copy{color:rgba(255,255,255,.4);font-size:11.5px;letter-spacing:.08em}
+
+  @media(max-width:900px){
+    .ledger__wrap{grid-template-columns:repeat(2,1fr)}
+    .lcell{border-top:1px solid var(--hair)}
+    .lcell:nth-child(-n+2){border-top:none}
+    .lcell:nth-child(3){border-left:none}
+    .steps{grid-template-columns:1fr}
+    .step{border-left:none;border-top:1px solid rgba(255,255,255,.14)}
+    .step:first-child{border-top:none}
+    .tabs{grid-template-columns:1fr}
+    .nav__links a:not(.nav__cta){display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <div class="container nav__inner">
+    <a href="#" class="brand">MERIDIAN<small>Real-World Assets</small></a>
+    <ul class="nav__links">
+      <li><a href="#assets">The assets</a></li>
+      <li><a href="#why">Why now</a></li>
+      <li><a href="#access" class="nav__cta">Request access</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <div class="eyebrow rv">RWA · Tokenized</div>
+    <h1 class="hero__title rv">The world's best assets now trade like the rest of your <em>portfolio</em>.</h1>
+    <p class="hero__dek rv">Treasuries, real estate, private credit — institutions are moving them on-chain. Liquidity where there used to be none.</p>
+    <p class="hero__note rv">For sophisticated investors · 24/7 settlement · institutions already in</p>
+    <div class="hero__ctas rv">
+      <a href="#assets" class="btn btn--gold">Explore the assets</a>
+      <a href="#why" class="btn btn--ghost">Why now</a>
+    </div>
+    <p class="hero__note rv">inside — the assets · how tokenization works · the risks · the questions</p>
+  </div>
+</header>
+
+<section class="section" id="assets">
+  <div class="container">
+    <div class="section__label rv">The Assets</div>
+    <h2 class="section__title rv">Three classes are leading the shift</h2>
+    <p class="section__lede rv">Tokenization doesn't change what you own — it changes how it moves. Explore each below.</p>
+    <div class="explorer rv" data-tabs>
+      <div class="tabs">
+        <button class="tab is-active" data-tab="treasuries">Treasuries</button>
+        <button class="tab" data-tab="credit">Private credit</button>
+        <button class="tab" data-tab="realestate">Real estate</button>
+      </div>
+      <div class="panel is-active" data-panel="treasuries">
+        <div class="panel__head"><div class="panel__title">Treasuries</div><div class="panel__adopt">Adoption: accelerating</div></div>
+        <p class="panel__text">The safest collateral in the world, now settling instantly instead of in days. What used to wait on a custodian and a settlement window now moves in seconds.</p>
+        <div class="panel__bar"><div class="panel__fill" style="width:82%"></div></div>
+      </div>
+      <div class="panel" data-panel="credit">
+        <div class="panel__head"><div class="panel__title">Private credit</div><div class="panel__adopt">Adoption: growing</div></div>
+        <p class="panel__text">A market once locked behind institutional minimums is now divisible and tradable. The same senior-secured exposure, without the decade-long lock-up.</p>
+        <div class="panel__bar"><div class="panel__fill" style="width:54%"></div></div>
+      </div>
+      <div class="panel" data-panel="realestate">
+        <div class="panel__head"><div class="panel__title">Real estate</div><div class="panel__adopt">Adoption: emerging</div></div>
+        <p class="panel__text">Own the income without the illiquidity trap that used to come with it. Fractional ownership, 24/7 market, no more waiting for a buyer.</p>
+        <div class="panel__bar"><div class="panel__fill" style="width:30%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--dark" id="why">
+  <div class="container">
+    <div class="section__label rv">Why now</div>
+    <h2 class="section__title rv">How tokenization actually works</h2>
+    <p class="section__lede rv">The asset is the same. The access, liquidity and settlement are not — in three steps.</p>
+    <div class="steps rv">
+      <div class="step"><div class="step__num">01</div><div class="step__title">Tokenize</div><div class="step__text">The ownership interest is recorded on-chain — not the physical asset, the claim on it.</div></div>
+      <div class="step"><div class="step__num">02</div><div class="step__title">Custody</div><div class="step__text">Regulated custodians hold the underlying. You hold a token that tracks it.</div></div>
+      <div class="step"><div class="step__num">03</div><div class="step__title">Trade</div><div class="step__text">Move in and out on your schedule — 24/7 settlement, not days of paperwork.</div></div>
+    </div>
+
+    <div class="institutions rv">
+      <div class="inst-label">Already moving on-chain</div>
+      <div class="inst-grid">
+        <div class="inst">Tokenized treasury funds<small>institutional issuers</small></div>
+        <div class="inst">Global private banks<small>custody &amp; distribution</small></div>
+        <div class="inst">Family offices<small>early allocators</small></div>
+      </div>
+      <p class="inst-note">Category-level illustration of who's already participating — not a client list.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="dive">
+  <div class="container container--narrow">
+    <div class="section__label rv">The Deep Dive</div>
+    <h2 class="section__title rv">What actually happens when you tokenize a treasury</h2>
+    <div class="prose rv">
+      <h3>You're not tokenizing paper. You're tokenizing a claim.</h3>
+      <p>Take a U.S. Treasury. It isn't scanned into a JPEG. Instead, the <strong>ownership interest</strong> is wrapped in a legal structure — a fund or a trust — and the claim on it is recorded on-chain as a token. The underlying asset stays with a regulated custodian. The token is your receipt, your entitlement, and your exit.</p>
+      <h3>The change isn't the asset. It's the clock.</h3>
+      <p>Traditional settlement runs on T+1 — a day of lag, and weeks of paperwork for private credit or real estate. On-chain, you buy at 2am and it settles in seconds. Same yield, same underlying, but <strong>you decide when to move</strong> — not a counterparty's office hours.</p>
+      <h3>Liquidity is the product.</h3>
+      <p>Private credit and real estate were never "bad" assets — they were <strong>illiquid</strong> assets. You could own them for a decade with no way out. Tokenization doesn't make them risk-free; it makes them <em>movable</em>. That's the entire pitch, and it's why institutions — not retail — moved first.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="honest">
+  <div class="container container--narrow">
+    <div class="section__label rv">The Honest Part</div>
+    <h2 class="section__title rv">Read this first</h2>
+    <div class="honest rv">
+      <h3>What tokenization does — and doesn't — change.</h3>
+      <ul>
+        <li>It changes access and settlement, not the underlying risk. A treasury is still a treasury; private credit still has default risk.</li>
+        <li>Regulatory, custody and counterparty risk remain. This is a new rail, not a new asset class.</li>
+        <li>These are income / yield assets, not moonshots. If you're looking for crypto-style upside, this isn't that.</li>
+        <li>For accredited / sophisticated investors only.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="faq">
+  <div class="container container--narrow">
+    <div class="section__label rv">The Questions</div>
+    <h2 class="section__title rv">Asked, answered.</h2>
+    <div class="faq rv">
+      <details><summary>What actually gets tokenized?</summary><p>The ownership interest — the claim on the asset — not the physical asset itself. The underlying stays with a regulated custodian.</p></details>
+      <details><summary>Is it safe? Who has custody?</summary><p>Regulated, licensed custodians hold the underlying assets. The token is the record of your claim.</p></details>
+      <details><summary>How liquid is private credit on-chain?</summary><p>Historically illiquid. On-chain, the same exposure becomes divisible and tradable — that's the entire point.</p></details>
+      <details><summary>Who can access it?</summary><p>Accredited / sophisticated investors only. Access is private.</p></details>
+      <details><summary>What are the risks?</summary><p>Regulatory, counterparty and illiquidity risk remain. Tokenization changes access, not the underlying risk.</p></details>
+      <details><summary>Do I need to be crypto-native?</summary><p>No. Custody and rails are abstracted away — you hold a familiar asset class, on a faster rail.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="reading">
+  <div class="container container--narrow">
+    <div class="reading__label rv">Keep reading</div>
+    <div class="reading__grid rv">
+      <a class="reading-card" href="article-1.html"><div class="reading-card__tag">The thesis</div><div class="reading-card__title">T+1 is why your money is stuck</div><div class="reading-card__more">The hidden tax on your portfolio. →</div></a>
+      <a class="reading-card" href="article-2.html"><div class="reading-card__tag">Explainers</div><div class="reading-card__title">Private credit's illiquidity trap</div><div class="reading-card__more">The yield was never the problem. →</div></a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="access">
+  <div class="container container--narrow">
+    <div class="section__label rv">Private Access</div>
+    <h2 class="section__title rv">Request private access</h2>
+    <p class="section__lede rv">MERIDIAN access is private. Leave your details and we'll be in touch with what's currently open.</p>
+    <form class="report-form rv" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <input type="text" name="name" placeholder="Your name" aria-label="Name" required>
+      <input type="email" name="email" placeholder="Email address" aria-label="Email" required>
+      <button type="submit" class="btn btn--primary">Request access</button>
+    </form>
+    <p class="report-note rv">No spam. Your data is private. Unsubscribe anytime.</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <div class="footer__brand">MERIDIAN · Real-World Assets</div>
+      <p class="footer__note">Nothing on this page is investment advice. Tokenized real-world assets involve risk, including illiquidity, regulatory and counterparty risk. For accredited / sophisticated investors only.</p>
+    </div>
+    <div class="footer__copy">© 2026 MERIDIAN</div>
+  </div>
+</footer>
+
+<script>
+  var pb=document.getElementById('progress');
+  window.addEventListener('scroll',function(){var h=document.documentElement;var sc=h.scrollTop||document.body.scrollTop;var m=h.scrollHeight-h.clientHeight;pb.style.width=(m>0?sc/m*100:0)+'%';},{passive:true});
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.12});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+  function countUp(el){var t=parseFloat(el.dataset.count);var dec=parseInt(el.dataset.dec||'0',10);var pre=el.dataset.prefix||'';var suf=el.dataset.suffix||'';var dur=1500;var s=performance.now();function step(n){var p=Math.min((n-s)/dur,1);p=1-Math.pow(1-p,3);var v=t*p;el.textContent=pre+(dec?v.toFixed(dec):Math.round(v).toLocaleString())+suf;if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);}
+  var cio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){countUp(e.target);cio.unobserve(e.target);}})},{threshold:.5});
+  document.querySelectorAll('[data-count]').forEach(function(el){cio.observe(el)});
+
+  document.querySelectorAll('[data-tabs]').forEach(function(group){
+    var tabs=group.querySelectorAll('[data-tab]'),panels=group.querySelectorAll('[data-panel]');
+    tabs.forEach(function(t){t.addEventListener('click',function(){tabs.forEach(function(x){x.classList.remove('is-active')});panels.forEach(function(p){p.classList.remove('is-active')});t.classList.add('is-active');group.querySelector('[data-panel="'+t.getAttribute('data-tab')+'"]').classList.add('is-active');});});
+  });
+</script>
+</body>
+</html>

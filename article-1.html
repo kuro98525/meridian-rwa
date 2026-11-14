@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>T+1 is why your money is stuck · MERIDIAN</title>
+<meta name="description" content="A day of settlement lag sounds small. Across a portfolio, it's the hidden tax you've never seen on a statement.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<nav class="nav">
+  <div class="container nav__inner">
+    <a href="index.html" class="brand">MERIDIAN<small>Real-World Assets</small></a>
+    <a href="index.html" class="nav__back">← back</a>
+  </div>
+</nav>
+
+<header class="article-head">
+  <div class="container">
+    <div class="article-head__tag">RWA · The Thesis</div>
+    <h1 class="article-head__title">T+1 is why your money is stuck</h1>
+    <p class="article-head__dek">A day of settlement lag sounds small. Across a portfolio, it's the hidden tax you've never seen on a statement.</p>
+    <div class="article-meta"><span>5 min read</span><span>Updated Nov 2026</span></div>
+  </div>
+</header>
+
+<article class="article-body">
+  <div class="container">
+    <p class="lead">When you sell a stock, the trade happens instantly. The money, though, arrives tomorrow. That one-day gap has a name — T+1 settlement — and for most of your life you've accepted it as natural. It isn't. It's friction, and it's costing you more than you think.</p>
+
+    <p>For a single trade, a day is nothing. For a portfolio, it compounds into something real: capital that's <strong>committed but not available</strong>, opportunities missed because the proceeds hadn't landed, positions held longer than they should be because the exit takes until tomorrow.</p>
+
+    <h2>Where the friction actually lives</h2>
+    <p>The lag isn't the market's fault. It's the plumbing — the chain of custodians, clearinghouses, and counterparties that a trade has to pass through before ownership is finally, officially, settled. Each hop adds a check, and each check adds a day.</p>
+
+    <p>For listed securities, the industry has squeezed this down to T+1. For <strong>private credit and real estate</strong>, the lag isn't a day — it's weeks of paperwork, and then a lock-up measured in years. The same underlying value, but with no way to move it.</p>
+
+    <div class="pull">The asset wasn't the problem. The exit was.</div>
+
+    <h2>What on-chain changes</h2>
+    <p>On-chain settlement doesn't add a faster horse to the same carriage — it removes the carriage. Ownership is recorded directly, transfer is the settlement, and it happens in seconds, at any hour. Not "the next business day." Not "when the office opens." Now.</p>
+
+    <p>That's the entire unlock. The treasury, the real estate, the private credit — they were never bad assets. They were <strong>slow</strong> assets. Tokenization makes them fast, and speed is liquidity.</p>
+
+    <h2>The honest frame</h2>
+    <p>None of this changes the underlying risk. A treasury is still a treasury; private credit still has default risk. What changes is the <em>clock</em> — and for anyone who's ever watched a good exit slip away because the money couldn't move, that clock was the whole problem.</p>
+  </div>
+</article>
+
+<section class="keep">
+  <div class="container">
+    <div class="keep__label">Keep reading</div>
+    <div class="keep__grid">
+      <a class="keep-card" href="article-2.html"><div class="keep-card__tag">Explainers</div><div class="keep-card__title">Private credit's illiquidity trap</div><div class="keep-card__more">The yield was never the problem →</div></a>
+      <a class="keep-card" href="index.html"><div class="keep-card__tag">Overview</div><div class="keep-card__title">Back to MERIDIAN</div><div class="keep-card__more">The landing page →</div></a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <div class="footer__brand" style="font-family:var(--display);font-weight:600;letter-spacing:.18em;font-size:14px;color:var(--navy)">MERIDIAN · Real-World Assets</div>
+      <p class="footer__note">Nothing on this page is investment advice. Tokenized real-world assets involve illiquidity, regulatory and counterparty risk. For accredited / sophisticated investors only.</p>
+    </div>
+    <div class="footer__copy">© 2026 MERIDIAN</div>
+  </div>
+</footer>
+
+<script>
+  var pb=document.getElementById('progress');
+  window.addEventListener('scroll',function(){var h=document.documentElement;var sc=h.scrollTop||document.body.scrollTop;var m=h.scrollHeight-h.clientHeight;pb.style.width=(m>0?sc/m*100:0)+'%';},{passive:true});
+</script>
+</body>
+</html>
